@@ -73,9 +73,21 @@ public class client {
             out.flush();
             System.out.println("Sent the data to the server");
 
-//            int test = in.readInt();
-//            System.out.println("Test" + test);
+            // Receive the result from the server
+            int result = in.readInt();
 
+            if(result == 0){
+                System.out.println("No path exists between the given source and destination");
+            }
+
+            else if (result > 0){
+                System.out.println("Yes! Path exists between the given source and destination.");
+                System.out.println("No. of paths: " + result);
+            }
+
+            else{
+                System.out.println("Error");
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);

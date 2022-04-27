@@ -78,7 +78,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1651065584345</updated>
-      <workItem from="1651065585434" duration="8438000" />
+      <workItem from="1651065585434" duration="11085000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1651066033158</created>
@@ -101,7 +101,14 @@
       <option name="project" value="LOCAL" />
       <updated>1651069203138</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Communicating with the server">
+      <created>1651078008854</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1651078008854</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -112,6 +119,7 @@
     <MESSAGE value="First commit" />
     <MESSAGE value="Added README.md" />
     <MESSAGE value="Taking input from the user" />
-    <option name="LAST_COMMIT_MESSAGE" value="Taking input from the user" />
+    <MESSAGE value="Communicating with the server" />
+    <option name="LAST_COMMIT_MESSAGE" value="Communicating with the server" />
   </component>
 </project>

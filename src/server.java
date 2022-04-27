@@ -4,9 +4,29 @@
 
 import java.io.*;
 import java.net.*;
-
+import java.util.*;
 
 public class server {
+
+    static int checkPath(int[][] adj, int u, int v, int k)
+    {
+
+        if (k == 0 && u == v)
+            return 1;
+        if (k == 1 && adj[u][v] == 1)
+            return 1;
+        if (k <= 0)
+            return 0;
+
+        int counter = 0;
+        for (int i = 0; i < v; i++) {
+            if (adj[u][i] == 1) {
+                counter += checkPath(adj, i, v, k - 1);
+            }
+        }
+
+        return counter;
+    }
     public static void main(String[] args) throws IOException {
 
 
@@ -47,7 +67,6 @@ public class server {
 
                 System.out.println("Distance: " + d);
 
-
                 // convert Character to capital
                 s = Character.toUpperCase(s);
                 ds = Character.toUpperCase(ds);
@@ -55,12 +74,26 @@ public class server {
                 System.out.println("Source: " + s);
                 System.out.println("Destination: " + ds);
 
+                int u = s - 65;
+                int v = ds - 65;
 
+                int paths = checkPath(adj, u, v, d);
+
+                if (paths == 0) {
+                    System.out.println("No path found");
+                    out.writeInt(0);
+                }
+                else if (paths > 0) {
+                    System.out.println("Path found");
+                    out.writeInt(paths);
+                }
+                else{
+                    System.out.println("Error");
+                    out.writeInt(paths);
+                }
 
 
             }
-
-
 
         } catch (IOException e) {
             System.out.println("Error: " + e);
