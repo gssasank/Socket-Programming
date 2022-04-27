@@ -2,12 +2,16 @@
 // @roll_no - 1910110152
 // @email - gs132@snu.edu.in
 
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.*;
+import java.net.*;
 
 public class client {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        try { // Take input for adjacency matrix
+
+        // Take input for adjacency matrix
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter the number of vertices:");
         int n = sc.nextInt();
@@ -44,9 +48,39 @@ public class client {
 
         //print the source and destination
         System.out.println("\nSource: " + s);
-        System.out.println("Destination: " + ds);}
-        catch (Exception e) {   //catch the exception
-            System.out.println("Invalid input, re-run the program");
+        System.out.println("Destination: " + ds);
+
+
+        try {
+            // Create a socket to connect to the server
+            Socket socket = new Socket("127.0.0.1", 1234);
+            System.out.println("Opened a socket to the server");
+            // Create an input and output stream to send data to the server
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+            out.writeInt(n);
+            // Send the adjacency matrix to the server
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    out.writeInt(adj[i][j]);
+                }
+            }
+
+            out.writeInt(d);
+            out.writeChar(s);
+            out.writeChar(ds);
+            out.flush();
+            System.out.println("Sent the data to the server");
+
+//            int test = in.readInt();
+//            System.out.println("Test" + test);
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+
     }
 }
