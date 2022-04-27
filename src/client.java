@@ -1,11 +1,17 @@
-// @author - GS Sasank
-// @roll_no - 1910110152
-// @email - gs132@snu.edu.in
+/** @author - GS Sasank
+ *  @email - gs132@snu.edu.in
+ *  @roll_no - 1910110152
+ **/
 
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.Scanner;
 import java.io.*;
 import java.net.*;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import org.apache.commons.collections15.Transformer;
+import javax.swing.*;
 
 public class client {
     public static void main(String[] args) throws IOException {
@@ -45,7 +51,6 @@ public class client {
 
         //print the distance to be verified
         System.out.println("\nLength of path: " + d);
-
         //print the source and destination
         System.out.println("\nSource: " + s);
         System.out.println("Destination: " + ds);
@@ -54,7 +59,7 @@ public class client {
         try {
             // Create a socket to connect to the server
             Socket socket = new Socket("127.0.0.1", 1234);
-            System.out.println("Opened a socket to the server");
+            System.out.println("\nOpened a socket to the server\n");
             // Create an input and output stream to send data to the server
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -89,7 +94,32 @@ public class client {
                 System.out.println("Error");
             }
 
-        } catch (IOException e) {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
+            DirectedSparseGraph<String, String> directedGraph = (DirectedSparseGraph<String, String>) ois.readObject();
+            VisualizationImageServer<String, String> imageVisualizer = new VisualizationImageServer<>(new CircleLayout<>(directedGraph),
+                    new Dimension(800, 800));
+
+            // Transformer object used in displaying the image
+            Transformer<String, String> transformer = new Transformer<String, String>() {
+                @Override
+                public String transform(String arg0) {
+                    return arg0;
+                }
+            };
+            imageVisualizer.getRenderContext().setVertexLabelTransformer(transformer);
+
+            // change color of node to green
+
+            JFrame frame = new JFrame("Image of Directed Graph");
+            frame.setLocationRelativeTo(null);
+            frame.getContentPane().add(imageVisualizer);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setVisible(true);
+
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
