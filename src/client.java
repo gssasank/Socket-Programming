@@ -1,21 +1,19 @@
-/** @author - GS Sasank
- *  @email - gs132@snu.edu.in
- *  @roll_no - 1910110152
+/**
+ * @author - GS Sasank
+ * @email - gs132@snu.edu.in
+ * @roll_no - 1910110152
  **/
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Scanner;
 import java.io.*;
 import java.net.*;
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import org.apache.commons.collections15.Transformer;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class client {
     public static void main(String[] args) throws IOException {
-
 
         // Take input for adjacency matrix
         Scanner sc = new Scanner(System.in);
@@ -81,45 +79,38 @@ public class client {
             // Receive the result from the server
             int result = in.readInt();
 
-            if(result == 0){
-                System.out.println("No path exists between the given source and destination");
-            }
-
-            else if (result > 0){
-                System.out.println("Yes! Path exists between the given source and destination.");
-                System.out.println("No. of paths: " + result);
-            }
-
-            else{
+            if (result == 0) {
+                System.out.println("No path exists between the given source and destination of given length");
+            } else if (result > 0) {
+                System.out.println("Yes! Path exists between the given source and destination of given length.");
+                System.out.println("No. of paths of given length: " + result);
+            } else {
                 System.out.println("Error");
             }
 
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            DataInputStream dIn = new DataInputStream(socket.getInputStream());
 
-            DirectedSparseGraph<String, String> directedGraph = (DirectedSparseGraph<String, String>) ois.readObject();
-            VisualizationImageServer<String, String> imageVisualizer = new VisualizationImageServer<>(new CircleLayout<>(directedGraph),
-                    new Dimension(800, 800));
+            int length = dIn.readInt();
+            byte[] message = new byte[length];// read length of incoming message
+            if (length > 0) {
+                dIn.readFully(message, 0, message.length);
+            }
 
-            // Transformer object used in displaying the image
-            Transformer<String, String> transformer = new Transformer<String, String>() {
-                @Override
-                public String transform(String arg0) {
-                    return arg0;
-                }
-            };
-            imageVisualizer.getRenderContext().setVertexLabelTransformer(transformer);
-
-            // change color of node to green
-
+            // convert byte array to image
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(message));
+            // save image to file
+            ImageIO.write(image, "png", new File("image.png"));
+            // display image
             JFrame frame = new JFrame("Image of Directed Graph");
+            frame.setBackground(Color.WHITE);
             frame.setLocationRelativeTo(null);
-            frame.getContentPane().add(imageVisualizer);
+            frame.getContentPane().add(new JLabel(new ImageIcon(image)));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.pack();
             frame.setVisible(true);
 
-        } catch (IOException | ClassNotFoundException e) {
+
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

@@ -1,12 +1,22 @@
-/** @author - GS Sasank
- *  @email - gs132@snu.edu.in
- *  @roll_no - 1910110152
-**/
+/**
+ * @author - GS Sasank
+ * @email - gs132@snu.edu.in
+ * @roll_no - 1910110152
+ **/
 
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
+import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import org.apache.commons.collections15.Transformer;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class server {
 
@@ -37,8 +47,8 @@ public class server {
             // Create an input and output stream to send data to the server
             while (true) {
                 Socket socket = serverSocket.accept(); //wait for the client request (Listen)
-                DataInputStream in = new DataInputStream(socket.getInputStream()); //create I/O streams for communicating to the client (Connect)
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream()); //create I/O streams for communicating to the client (Connect)
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
                 int n = in.readInt();
 
@@ -104,12 +114,39 @@ public class server {
                     }
                 }
 
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                VisualizationImageServer<String, String> imageVisualizer = new VisualizationImageServer<>(new CircleLayout<>(directedGraph),
+                        new Dimension(500, 500));
 
-                oos.writeObject(directedGraph);
+                Transformer<String, String> transformer = arg0 -> arg0;
+                imageVisualizer.getRenderContext().setVertexLabelTransformer(transformer);
+
+                JFrame frame = new JFrame("Image of Directed Graph rendered from the server");
+                frame.setLocationRelativeTo(null);
+                frame.getContentPane().add(imageVisualizer);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.pack();
+                frame.dispose();
+
+                BufferedImage image = new BufferedImage(imageVisualizer.getWidth(), imageVisualizer.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D graphics = image.createGraphics();
+                imageVisualizer.print(graphics);
+                graphics.dispose();
+
+                frame.paint(image.getGraphics());
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", baos);
+                baos.flush();
+                byte[] imageInByte = baos.toByteArray();
+                baos.close();
+
+                DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
+                dOut.writeInt(imageInByte.length);
+                dOut.write(imageInByte);
+                dOut.flush();
+
 
             }
-
 
 
         } catch (IOException e) {
