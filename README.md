@@ -8,7 +8,10 @@ The server responds back with two responses:
 - The image of the directed graph with nodes proving the validity of the response.
 
 ## Implementation
-[JUNG](http://jung.sourceforge.net/) library is used to implement the graph. The client sends the server the adjacency matrix and the length of the path to be verified along with the nodes. The server sends back the response and the image to be rendered by the client back to it.
+The program uses TCP protocol to send and receive messages. It is a connection-oriented protocol for communications that helps in the exchange of messages between the different devices over a network.
+
+[JUNG](http://jung.sourceforge.net/) library is used to implement the graph. The client sends the server the adjacency matrix and the length of the path to be verified along with the nodes. 
+The server sends back the response and the image to be rendered by the client back to it.
 Install the library from Maven Central or manually add the dependency to the pom.xml file.
 
 ## Sample Input and Output
